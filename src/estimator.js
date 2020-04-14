@@ -30,7 +30,7 @@ function calculateSevereCasesByRequestedTime(infectionsByRequestedTime) {
 function NumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
   const availableHospitalBeds = totalHospitalBeds * 0.35;
   const hospitalBedsByRequestedTime = availableHospitalBeds - severeCasesByRequestedTime;
-  return hospitalBedsByRequestedTime;
+  return Math.trunc(hospitalBedsByRequestedTime);
 }
 
 function calcDollarsInFlight(data, infectionsByRequestedTime) {
