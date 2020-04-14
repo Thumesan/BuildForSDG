@@ -34,11 +34,11 @@ function NumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
 }
 
 function calcDollarsInFlight(data, infectionsByRequestedTime) {
-  const dailyIncome = data.avgDailyIncomeInUSD;
-  const incomePop = data.avgDailyIncomePopulation;
+  const dailyIncome = Math.trunc(data.avgDailyIncomeInUSD);
+  const incomePop = Math.trunc(data.avgDailyIncomePopulation);
   const multiply = infectionsByRequestedTime * incomePop * dailyIncome;
-  const dollarsInFlight = multiply / 30;
-  return Math.trunc(dollarsInFlight);
+  const dollarsInFlight = Math.trunc(multiply / 30);
+  return dollarsInFlight;
 }
 
 function calculateImpact(data) {
