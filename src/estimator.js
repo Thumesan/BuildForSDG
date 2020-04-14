@@ -24,7 +24,7 @@ function calculateInfectionsByRequestedTime(currentlyInfected, periodType, timeT
 
 function calculateSevereCasesByRequestedTime(infectionsByRequestedTime) {
   const severeCasesByRequestedTime = infectionsByRequestedTime * 0.15;
-  return severeCasesByRequestedTime;
+  return Math.trunc(severeCasesByRequestedTime);
 }
 
 function NumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
