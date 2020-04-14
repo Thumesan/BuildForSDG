@@ -36,7 +36,8 @@ function NumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
 function calcDollarsInFlight(data, infectionsByRequestedTime) {
   const dailyIncome = data.avgDailyIncomeInUSD;
   const incomePop = data.avgDailyIncomePopulation;
-  const dollarsInFlight = (infectionsByRequestedTime * incomePop * dailyIncome) / 30;
+  const multiply = infectionsByRequestedTime * incomePop * dailyIncome;
+  const dollarsInFlight = multiply / 30;
   return Math.trunc(dollarsInFlight);
 }
 
