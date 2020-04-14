@@ -109,7 +109,8 @@ const challengesOutput = (data) => {
 };
 
 const covid19ImpactEstimator = (data) => {
-  challengesOutput(data);
+  const output = challengesOutput(data);
+  return output;
 };
 
 export default covid19ImpactEstimator;
