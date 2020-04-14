@@ -28,44 +28,57 @@ function calculateSevereCasesByRequestedTime(infectionsByRequestedTime) {
   return severeCasesByRequestedTime;
 }
 
-function determineNumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
+function NumberOfAvailableBeds(severeCasesByRequestedTime, totalHospitalBeds) {
   const availableHospitalBeds = totalHospitalBeds * 0.35;
   const hospitalBedsByRequestedTime = availableHospitalBeds - severeCasesByRequestedTime;
   return hospitalBedsByRequestedTime;
 }
 
 function calcDollarsInFlight(data, infectionsByRequestedTime) {
-  const dollarsInFlight = (infectionsByRequestedTime * data.avgDailyIncomePopulation * data.avgDailyIncomeInUSD) / 30;
+  const dailyIncome = data.avgDailyIncomeInUSD;
+  const incomePop = data.avgDailyIncomePopulation;
+  const dollarsInFlight = (infectionsByRequestedTime * incomePop * dailyIncome) / 30;
   return Math.trunc(dollarsInFlight);
 }
 
 function calculateImpact(data) {
   const currentlyInfected = data.reportedCases * 10;
-  const infectionsByRequestedTime = calculateInfectionsByRequestedTime(currentlyInfected, data.periodType, data.timeToElapse);
+  const pt = data.periodType;// reduced chars as eslint suggested too long
+  const tte = data.timeToElapse;// reduced chars as eslint suggested too long
+  const thb = data.totalHospitalBeds;
+  const infectionsByRequestedTime = calculateInfectionsByRequestedTime(currentlyInfected, pt, tte);
   const severeCasesByRequestedTime = calculateSevereCasesByRequestedTime(infectionsByRequestedTime);
-  const hospitalBedsByRequestedTime = determineNumberOfAvailableBeds(severeCasesByRequestedTime, data.totalHospitalBeds);
+  const hospitalBedsByRequestedTime = NumberOfAvailableBeds(severeCasesByRequestedTime, thb);
   const dollarsInFlight = calcDollarsInFlight(data, infectionsByRequestedTime);
+  const casesForVentilatorsByRequestedTime = Math.trunc(infectionsByRequestedTime * 0.02);
+
   return {
     currentlyInfected,
     infectionsByRequestedTime,
     severeCasesByRequestedTime,
     hospitalBedsByRequestedTime,
-    dollarsInFlight
+    dollarsInFlight,
+    casesForVentilatorsByRequestedTime
   };
 }
 
 function calculateSeverImpact(data) {
   const currentlyInfected = data.reportedCases * 50;
-  const infectionsByRequestedTime = calculateInfectionsByRequestedTime(currentlyInfected, data.periodType, data.timeToElapse);
+  const pt = data.periodType;
+  const tte = data.timeToElapse;
+  const thb = data.totalHospitalBeds;
+  const infectionsByRequestedTime = calculateInfectionsByRequestedTime(currentlyInfected, pt, tte);
   const severeCasesByRequestedTime = calculateSevereCasesByRequestedTime(infectionsByRequestedTime);
-  const hospitalBedsByRequestedTime = determineNumberOfAvailableBeds(severeCasesByRequestedTime, data.totalHospitalBeds);
+  const hospitalBedsByRequestedTime = NumberOfAvailableBeds(severeCasesByRequestedTime, thb);
   const dollarsInFlight = calcDollarsInFlight(data, infectionsByRequestedTime);
+  const casesForVentilatorsByRequestedTime = Math.trunc(infectionsByRequestedTime * 0.02);
   return {
     currentlyInfected,
     infectionsByRequestedTime,
     severeCasesByRequestedTime,
     hospitalBedsByRequestedTime,
-    dollarsInFlight
+    dollarsInFlight,
+    casesForVentilatorsByRequestedTime
   };
 }
 
@@ -81,7 +94,7 @@ const challengesOutput = (data) => {
       severeCasesByRequestedTime: impactCalc.severeCasesByRequestedTime,
       hospitalBedsByRequestedTime: impactCalc.hospitalBedsByRequestedTime,
       casesForICUByRequestedTime: Math.trunc(impactCalc.infectionsByRequestedTime * 0.05),
-      casesForVentilatorsByRequestedTime: Math.trunc(impactCalc.infectionsByRequestedTime * 0.02),
+      casesForVentilatorsByRequestedTime: impactCalc.casesForVentilatorsByRequestedTime,
       dollarsInFlight: impactCalc.dollarsInFlight
     }, // your best case estimation
     severeImpact: {
@@ -90,7 +103,7 @@ const challengesOutput = (data) => {
       severeCasesByRequestedTime: severImpactCalc.severeCasesByRequestedTime,
       hospitalBedsByRequestedTime: severImpactCalc.hospitalBedsByRequestedTime,
       casesForICUByRequestedTime: Math.trunc(severImpactCalc.infectionsByRequestedTime * 0.05),
-      casesForVentilatorsByRequestedTime: Math.trunc(severImpactCalc.infectionsByRequestedTime * 0.02),
+      casesForVentilatorsByRequestedTime: severImpactCalc.casesForVentilatorsByRequestedTime,
       dollarsInFlight: severImpactCalc.dollarsInFlight
     } // your severe case estimation
   };
